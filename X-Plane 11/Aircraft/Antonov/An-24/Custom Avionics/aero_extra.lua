@@ -39,6 +39,11 @@ koef_landgear = 0.5    -- 0�5 positive nose up
 
 function update()
 
+	--Read current plugin moments
+	current_roll = get(M_roll)
+	current_pitch = get(M_pitch)
+	current_yaw = get(M_yaw)
+
 	delta_thrust = (get(thrust2) + get(thrust3)) - get(thrust1)
 	if get(gear1_deflect) > 0.05 then
 		stab_force = get(thrust2) * koef_stabforce_ground
@@ -58,14 +63,14 @@ function update()
 
 	slip_force = get(slip) * get(ias) * koef_slipforce
 
-	result_roll = prop_force + slip_force
-	result_yaw = ground_force + stab_force
+	result_roll = current_roll + prop_force + slip_force
+	result_yaw = current_yaw + ground_force + stab_force
 
 	set(M_roll, result_roll)
 	set(M_yaw, result_yaw)
 
 	--landgear pitch moment
-	result_pitch = get(ias)^2 * (get(gear1_deploy) + get(gear2_deploy) + get(gear3_deploy))/3 * koef_landgear
+	result_pitch = current_pitch + get(ias)^2 * (get(gear1_deploy) + get(gear2_deploy) + get(gear3_deploy))/3 * koef_landgear
 	set(M_pitch, result_pitch)
 
 end
